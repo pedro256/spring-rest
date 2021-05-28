@@ -76,6 +76,8 @@ public class CidadeService {
 		return cidadeRepository.nome(nome);
 	}
 	public List<Cidade> buscarNomeContaining(String nome){
+		
 		return cidadeRepository.findByNomeContaining(nome);
+		
 	}
 }

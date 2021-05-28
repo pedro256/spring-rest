@@ -51,6 +51,7 @@ public class RestauranteService {
 		return restauranteRepository.findByCozinhaNomeContaining(nome);
 	}
 	public Optional<Restaurante> buscar(Long id) {
+		//restauranteRepository.buscarPrimeiro(); 
 		return restauranteRepository.findById(id);
 	}
 	

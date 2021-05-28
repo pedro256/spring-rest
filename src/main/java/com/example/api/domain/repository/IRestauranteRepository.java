@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.api.domain.models.Restaurante;
-import com.example.api.domain.repository.costumers.RestauranteRepositoryCostumer;
+import com.example.api.domain.repository.custom.CustomJpaRepository;
 @Repository
-public interface IRestauranteRepository extends JpaRepository<Restaurante,Long>{
+public interface IRestauranteRepository extends CustomJpaRepository<Restaurante,Long>{
 
 	/*
 	List<Restaurante> todos();

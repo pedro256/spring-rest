@@ -1,6 +1,7 @@
 package com.example.api.infrastructure.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,17 +13,16 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.example.api.domain.models.Restaurante;
-import com.example.api.domain.repository.costumers.RestauranteRepositoryCostumer;
 
 @Repository
-public class RestauranteRepositoryImpl implements RestauranteRepositoryCostumer {
+public class RestauranteRepositoryImpl {
 
 	@PersistenceContext
 	private EntityManager manager;
 	
-	@Override
 	public List<Restaurante> find(String nome,BigDecimal taxaInicial, BigDecimal taxaFinal){
 		/*
 		String jpql = "from Restaurante where nome like :nome and taxaFrete between :txInicial and :txFinal";
@@ -37,14 +37,22 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryCostumer 
 		Root<Restaurante> root =  criteria.from(Restaurante.class); // FROM RESTAURANTE
 		//root é a raiz da pesquisa, no caso restaurante
 		
-		//usamos para criar expressões como LIKE
-		Predicate nomePredicado = criteriaBuilder.like(root.get("nome"), "%"+nome+"%");
-		// expressão maior ou igual 
-		Predicate taxaInicialW = criteriaBuilder.greaterThanOrEqualTo(root.get("taxa_frete"), taxaInicial);
-		// expressão menor ou igual
-		Predicate taxaFinalW= criteriaBuilder.lessThanOrEqualTo(root.get("taxa_frete"), taxaFinal);
+		var predicates = new ArrayList<Predicate>();
+		
+		if(StringUtils.hasText(nome)) {
+			//usamos para criar expressões como LIKE
+			predicates.add(criteriaBuilder.like(root.get("nome"), "%"+nome+"%"));
+		}
+		if(taxaInicial != null) {
+			// expressão maior ou igual 
+			predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("taxa_frete"), taxaInicial));
+		}
+		if(taxaFinal != null) {
+			predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("taxa_frete"), taxaFinal));
+		}
+		
 		//inserimos a expressão no where
-		criteria.where(nomePredicado,taxaInicialW,taxaFinalW);
+		criteria.where(predicates.toArray(new Predicate[0]));
 		
 		TypedQuery<Restaurante> query =  manager.createQuery(criteria);
 		return query.getResultList();
